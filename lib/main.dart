@@ -7,8 +7,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
 import '/auth/cubit/auth_cubit.dart';
+import '/auth/cubit/user_cubit.dart';
 import '/auth/repository/auth_repository.dart';
-import '/auth/screen/sign_up_screen.dart';
+import '/auth/repository/user_repository.dart';
+import '/common/cubit/custom_theme_cubit.dart';
+import '/common/screen/splash_screen.dart';
+import '/common/state/custom_theme_state.dart';
 import 'firebase_options.dart';
 
 // showDialog() 함수를 화면 어디에서나 사용하기 위해 GlobalKey<NavigatorState> 객체 선언
@@ -27,6 +31,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 임시 로그아웃
+    // FirebaseAuth.instance.signOut();
+
     // Firebase 관련 인스턴스 변수들
     final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
@@ -42,13 +49,29 @@ class MyApp extends StatelessWidget {
             firebaseStorage: firebaseStorage,
           ),
         ),
+        // 사용자 Repository
+        RepositoryProvider(
+          create: (context) => UserRepository(
+            firebaseAuth: firebaseAuth,
+            firebaseFirestore: firebaseFirestore,
+          ),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
+          // 테마 Cubit
+          BlocProvider(create: (context) => CustomThemeCubit()),
           // 사용자 회원가입, 로그인
           BlocProvider(
             create: (context) =>
                 AuthCubit(authRepository: context.read<AuthRepository>()),
+            // 선언과 동시에 실행
+            lazy: false,
+          ),
+          // 사용자 Cubit
+          BlocProvider(
+            create: (context) =>
+                UserCubit(userRepository: context.read<UserRepository>()),
           ),
         ],
         child: GlobalLoaderOverlay(
@@ -56,11 +79,16 @@ class MyApp extends StatelessWidget {
           overlayWidgetBuilder: (_) => const Center(
             child: CircularProgressIndicator(color: Colors.orange),
           ),
-          child: MaterialApp(
-            navigatorKey: navigatorKey,
-            // 오른쪽 상단 디버그 표시 제거
-            debugShowCheckedModeBanner: false,
-            home: SignUpScreen(),
+          child: BlocBuilder<CustomThemeCubit, CustomThemeState>(
+            builder: (context, state) {
+              return MaterialApp(
+                // 오른쪽 상단 디버그 표시 제거
+                debugShowCheckedModeBanner: false,
+                navigatorKey: navigatorKey,
+                theme: state.themeData,
+                home: SplashScreen(),
+              );
+            },
           ),
         ),
       ),

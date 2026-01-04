@@ -71,20 +71,6 @@ class AuthRepository {
         logger.d(profileImageUrl);
       }
 
-      // Firestore 저장
-      // await firebaseFirestore.collection('users').doc(uid).set({
-      //   'uid': uid,
-      //   'email': email,
-      //   'name': name,
-      //   'comment': comment,
-      //   'profileImage': profileImageUrl,
-      //   'feedCount': 0,
-      //   'likes': [],
-      //   'followers': [],
-      //   'following': [],
-      //   'bookmarks': [],
-      // });
-
       // UserModel 생성
       UserModel userModel = UserModel(
         uid: uid,
@@ -110,5 +96,46 @@ class AuthRepository {
     } catch (_) {
       rethrow;
     }
+  }
+
+  // [이메일 + 비밀번호] 기반 로그인 처리
+  Future<void> signInWithEmailAndPassword({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      // FirebaseAuth 이용해서 [이메일 + 비밀번호] 기반 로그인
+      // 메서드를 호출하면 자동으로 FirebaseAuth 자동 로그인 처리됨.
+      UserCredential userCredential = await firebaseAuth
+          .signInWithEmailAndPassword(email: email, password: password);
+
+      // 인증메일 확인 여부
+      bool isVerified = userCredential.user!.emailVerified;
+      // 인증메일 인증하지 않았다면 인증메일 재발송 & 로그아웃
+
+      if (!isVerified) {
+        await userCredential.user!.sendEmailVerification();
+        await firebaseAuth.signOut();
+        throw Exception('인증되지 않은 이메일\n\n인증메일 확인 후에 로그인 가능합니다!');
+      }
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  // 로그아웃
+  Future<void> signOut() async {
+    try {
+      await firebaseAuth.signOut();
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  // 실시간 사용자의 상태관리를 위한 Stream 기반 getter
+  Stream<User?> get user {
+    return firebaseAuth.authStateChanges().map((user) {
+      return user == null ? null : firebaseAuth.currentUser;
+    });
   }
 }

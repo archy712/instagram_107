@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:validators/validators.dart';
 
+import '/auth/cubit/auth_cubit.dart';
+import '/auth/screen/sign_up_screen.dart';
 import '/common/util/global_loading.dart';
 import '/common/util/logger.dart';
 import '/common/widget/app_text.dart';
@@ -117,10 +120,33 @@ class _SignInScreenState extends State<SignInScreen> {
               try {
                 // 로딩 시작
                 GlobalLoading.showLoading(true);
+
+                // 로그인 전 상태 확인
+                logger.d(
+                  context.read<AuthCubit>().state.authProgressStatusEnum,
+                );
+                logger.d(context.read<AuthCubit>().state.authCurrentStatusEnum);
+
                 // 로그인 로직 호출
-                // ...
+                // 유효성 검증 성공하여 로그인 로직 실행
+                await context.read<AuthCubit>().signInWithEmailAndPassword(
+                  email: _emailController.text,
+                  password: _passwordController.text,
+                );
+
                 // Loading 종료
                 GlobalLoading.showLoading(false);
+
+                // 로그인 후 상태 확인
+                if (mounted) {
+                  logger.d(
+                    context.read<AuthCubit>().state.authProgressStatusEnum,
+                  );
+                  logger.d(
+                    context.read<AuthCubit>().state.authCurrentStatusEnum,
+                  );
+                }
+
                 // SnackBar 메시지
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -144,7 +170,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 // Dialog Box
                 DialogWidget.showAlertDialog(
                   title: '로그인 오류',
-                  msg: e.toString(),
+                  msg: '회원정보가 일치하지 않습니다.\n로그인 정보를 확인하여 다시 시도해 주세요',
                 );
               }
             }
@@ -159,7 +185,15 @@ class _SignInScreenState extends State<SignInScreen> {
   // 회원가입 버튼 위젯
   Widget _signUpButtonWidget() {
     return TextButton(
-      onPressed: () {},
+      onPressed: _isEnabled
+          ? () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const SignUpScreen()),
+              );
+            }
+          : null,
+
       child: AppText('회원이 아니신가요? 회원가입하기', fontSize: 14),
     );
   }

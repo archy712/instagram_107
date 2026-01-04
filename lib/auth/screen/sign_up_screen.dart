@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:validators/validators.dart';
 
 import '/auth/cubit/auth_cubit.dart';
+import '/auth/screen/sign_in_screen.dart';
 import '/common/util/global_loading.dart';
 import '/common/util/logger.dart';
 import '/common/widget/app_text.dart';
@@ -245,6 +246,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                 // SnackBar 메시지
                 if (mounted) {
+                  // 가입 후에는 로그인 화면으로 이동
+                  // 화면이동 + 메시지 표시 작업이 동시에 이루어 질 때 화면이동을 먼저.
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => SignInScreen()),
+                  );
+
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: AppText(
@@ -317,7 +325,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // 로그인 버튼 위젯
   Widget _signInInButtonWidget() {
     return TextButton(
-      onPressed: () {},
+      onPressed: _isEnabled
+          ? () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const SignInScreen()),
+              );
+            }
+          : null,
+
       child: AppText('이미 회원이신가요? 로그인하기', fontSize: 14),
     );
   }
