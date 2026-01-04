@@ -1,12 +1,18 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:validators/validators.dart';
 
+import '/auth/cubit/auth_cubit.dart';
+import '/common/util/global_loading.dart';
+import '/common/util/logger.dart';
 import '/common/widget/app_text.dart';
 import '/common/widget/app_text_form_field.dart';
+import '/common/widget/dialog_widget.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -29,6 +35,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   // Form 위젯의 AutoValidateMode 속성
   AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
+
+  // 버튼 비활성화 여부
+  bool _isEnabled = true;
 
   @override
   void dispose() {
@@ -88,7 +97,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             // 아래에서 위로 10만큼
             bottom: -10,
             child: IconButton(
-              onPressed: _selectProfileImage,
+              onPressed: _isEnabled ? _selectProfileImage : null,
               icon: const Icon(Icons.add_a_photo),
             ),
           ),
@@ -101,6 +110,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // 이메일 입력 위젯
   Widget _emailInputWidget() {
     return AppTextFormField(
+      enabled: _isEnabled,
       controller: _emailController,
       labelText: '이메일',
       iconData: Icons.email,
@@ -119,6 +129,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // 이름 입력 위젯
   Widget _nameInputWidget() {
     return AppTextFormField(
+      enabled: _isEnabled,
       controller: _nameController,
       labelText: '이름',
       iconData: Icons.account_circle,
@@ -138,6 +149,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // 한줄 소개 위젯
   Widget _commentInputWidget() {
     return AppTextFormField(
+      enabled: _isEnabled,
       controller: _commentController,
       labelText: '한 줄 소개',
       iconData: Icons.comment,
@@ -157,6 +169,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // 비밀번호 입력 위젯
   Widget _passwordInputWidget() {
     return AppTextFormField(
+      enabled: _isEnabled,
       controller: _passwordController,
       obscureText: true,
       labelText: '비밀번호',
@@ -177,6 +190,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // 비밀번호 확인 입력 위젯
   Widget _passwordConfirmInputWidget() {
     return AppTextFormField(
+      enabled: _isEnabled,
       obscureText: true,
       labelText: '비밀번호 확인',
       helperText: '입력한 비밀번호를 다시 한번 입력해 주세요',
@@ -193,20 +207,106 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // 회원가입 버튼 위젯
   Widget _signUpButtonWidget() {
     return ElevatedButton(
-      onPressed: () {
-        // 유효성 검증을 위한 FormState 얻기
-        final FormState? formState = _formKey.currentState;
+      onPressed: _isEnabled
+          ? () async {
+              // 키보드 내리고
+              FocusScope.of(context).unfocus();
 
-        // 각 항목의 유효성 검증 이후에는 자동으로 검증모드 변경
-        setState(() {
-          _autovalidateMode = AutovalidateMode.always;
-        });
+              // 유효성 검증을 위한 FormState 얻기
+              final FormState? formState = _formKey.currentState;
 
-        // 유효성 검증
-        if (formState == null || !formState.validate()) {
-          return;
-        }
-      },
+              // 각 항목의 유효성 검증 이후에는 자동으로 검증모드 변경
+              setState(() {
+                _autovalidateMode = AutovalidateMode.always;
+              });
+
+              // 유효성 검증
+              if (formState == null || !formState.validate()) {
+                return;
+              }
+
+              // 유효성 통과하면 모든 항목 비활성화
+              setState(() {
+                _isEnabled = false;
+              });
+
+              try {
+                // 로딩 시작
+                GlobalLoading.showLoading(true);
+
+                // 회원가입 로직 호출
+                await context.read<AuthCubit>().signUpWithEmailAndPassword(
+                  email: _emailController.text,
+                  name: _nameController.text,
+                  comment: _commentController.text,
+                  password: _passwordController.text,
+                  profileImage: _profileImage,
+                );
+
+                // SnackBar 메시지
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: AppText(
+                        '가입 인증메일을 전송했습니다!\n인증메일을 클릭해야 정식 가입됩니다!',
+                        textAlign: TextAlign.center,
+                        color: Colors.black,
+                      ),
+                      duration: Duration(seconds: 10),
+                      backgroundColor: Colors.orange,
+                    ),
+                  );
+                }
+
+                // 로딩 종료
+                GlobalLoading.showLoading(false);
+              } on FirebaseAuthException catch (e) {
+                // 로딩 종료
+                GlobalLoading.showLoading(false);
+
+                // 오류 발생하면 모든 항목 활성화
+                setState(() {
+                  _isEnabled = true;
+                });
+                // FirebaseAuthException에 따른 오류 메시지 분기 처리
+                String errorMessage;
+                switch (e.code) {
+                  case 'weak-password':
+                    errorMessage = '비밀번호가 너무 약합니다. 6자리 이상의 비밀번호를 사용해주세요.';
+                    break;
+                  case 'email-already-in-use':
+                    errorMessage = '이미 사용 중인 이메일 주소입니다. 다른 이메일로 시도해주세요.';
+                    break;
+                  case 'invalid-email':
+                    errorMessage = '유효하지 않은 이메일 주소 형식입니다. 올바른 이메일 주소를 입력해주세요.';
+                    break;
+                  default:
+                    errorMessage = '알 수 없는 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+                    break;
+                }
+                // Dialog Box
+                DialogWidget.showAlertDialog(
+                  title: '회원가입 오류',
+                  msg: errorMessage,
+                );
+              } catch (e, stackTrace) {
+                // 로딩 종료
+                GlobalLoading.showLoading(false);
+
+                // 오류 발생하면 모든 항목 활성화
+                setState(() {
+                  _isEnabled = true;
+                });
+                // 커맨드창에 상세 오류 표시
+                logger.e(stackTrace.toString());
+                // Dialog Box
+                DialogWidget.showAlertDialog(
+                  title: '회원가입 오류',
+                  msg: e.toString(),
+                );
+              }
+            }
+          : null,
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 15),
       ),
@@ -224,50 +324,54 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: FocusScope.of(context).unfocus,
-      child: Scaffold(
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0),
-            child: Form(
-              key: _formKey,
-              autovalidateMode: _autovalidateMode,
-              child: ListView(
-                // 원래 위아래 전체 길이인데, 필요한 만큼만 차지하게 (정중앙 정렬)
-                shrinkWrap: true,
-                // 키보드 올라온 만큼 위젯 가려지지 않게 위로 올리기
-                // ListView : reverse 속성 true + children [].reversed.toList()
-                reverse: true,
-                children: [
-                  const SizedBox(height: 20),
-                  // 로고 타이틀 위젯
-                  _logoTitleWidget(),
-                  const SizedBox(height: 40),
-                  // 프로필 이미지 위젯
-                  _profileImageWidget(),
-                  const SizedBox(height: 40),
-                  // 이메일 입력 위젯
-                  _emailInputWidget(),
-                  const SizedBox(height: 20),
-                  // 이름 입력 위젯
-                  _nameInputWidget(),
-                  const SizedBox(height: 20),
-                  // 한줄 소개 입력 위젯
-                  _commentInputWidget(),
-                  const SizedBox(height: 20),
-                  // 비밀번호 입력 위젯
-                  _passwordInputWidget(),
-                  const SizedBox(height: 20),
-                  // 비밀번호 확인 입력 위젯
-                  _passwordConfirmInputWidget(),
-                  const SizedBox(height: 40),
-                  // 회원가입 버튼 위젯
-                  _signUpButtonWidget(),
-                  const SizedBox(height: 20),
-                  // 로그인 버튼 위젯
-                  _signInInButtonWidget(),
-                ].reversed.toList(),
+    return PopScope(
+      // 뒤로가기 (back) 버튼 비활성화
+      canPop: false,
+      child: GestureDetector(
+        onTap: FocusScope.of(context).unfocus,
+        child: Scaffold(
+          body: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30.0),
+              child: Form(
+                key: _formKey,
+                autovalidateMode: _autovalidateMode,
+                child: ListView(
+                  // 원래 위아래 전체 길이인데, 필요한 만큼만 차지하게 (정중앙 정렬)
+                  shrinkWrap: true,
+                  // 키보드 올라온 만큼 위젯 가려지지 않게 위로 올리기
+                  // ListView : reverse 속성 true + children [].reversed.toList()
+                  reverse: true,
+                  children: [
+                    const SizedBox(height: 20),
+                    // 로고 타이틀 위젯
+                    _logoTitleWidget(),
+                    const SizedBox(height: 40),
+                    // 프로필 이미지 위젯
+                    _profileImageWidget(),
+                    const SizedBox(height: 40),
+                    // 이메일 입력 위젯
+                    _emailInputWidget(),
+                    const SizedBox(height: 20),
+                    // 이름 입력 위젯
+                    _nameInputWidget(),
+                    const SizedBox(height: 20),
+                    // 한줄 소개 입력 위젯
+                    _commentInputWidget(),
+                    const SizedBox(height: 20),
+                    // 비밀번호 입력 위젯
+                    _passwordInputWidget(),
+                    const SizedBox(height: 20),
+                    // 비밀번호 확인 입력 위젯
+                    _passwordConfirmInputWidget(),
+                    const SizedBox(height: 40),
+                    // 회원가입 버튼 위젯
+                    _signUpButtonWidget(),
+                    const SizedBox(height: 20),
+                    // 로그인 버튼 위젯
+                    _signInInButtonWidget(),
+                  ].reversed.toList(),
+                ),
               ),
             ),
           ),
