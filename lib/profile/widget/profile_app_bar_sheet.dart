@@ -2,13 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '/auth/cubit/auth_cubit.dart';
+import '/common/cubit/custom_theme_cubit.dart';
+import '/common/cubit/locale_cubit.dart';
+import '/common/state/custom_theme_state.dart';
+import '/common/util/locale/generated/l10n.dart';
+import '/common/widget/app_text.dart';
 
-// TODO: 다국어 지원 시 수정 필요
 class ProfileAppBarSheet extends StatelessWidget {
   const ProfileAppBarSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // 테마 모드 확인
+    final ThemeModeEnum themeModeEnum = context
+        .read<CustomThemeCubit>()
+        .state
+        .themeModeEnum;
+
+    // Locale 설정
+    final Locale locale = context.watch<LocaleCubit>().state;
+
     return SafeArea(
       child: Align(
         // 왼쪽 정렬
@@ -36,8 +49,8 @@ class ProfileAppBarSheet extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      'Instagram 설정',
+                    Text(
+                      'Instagram ${S.current.controlText}',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -56,7 +69,7 @@ class ProfileAppBarSheet extends StatelessWidget {
                 // 로그아웃
                 ListTile(
                   leading: Icon(Icons.logout),
-                  title: Text('로그아웃'),
+                  title: Text(S.current.profileLogout),
                   trailing: const Icon(
                     Icons.arrow_forward_ios,
                     size: 16.0,
@@ -65,6 +78,50 @@ class ProfileAppBarSheet extends StatelessWidget {
                   onTap: () async {
                     await context.read<AuthCubit>().signOut();
                   },
+                ),
+                const Divider(height: 1),
+                // 테마 선택
+                SwitchListTile(
+                  secondary: const Icon(Icons.brightness_6),
+                  title: AppText(S.current.profileThemeTitle),
+                  subtitle: AppText(S.current.profileSubTitle),
+                  activeThumbColor: Colors.orange,
+                  value: themeModeEnum == ThemeModeEnum.light,
+                  onChanged: (value) {
+                    context.read<CustomThemeCubit>().toggleThemeMode();
+                  },
+                ),
+                const Divider(height: 1),
+                // 다국어
+                ListTile(
+                  leading: Icon(Icons.language),
+                  title: Text(S.current.profileLanguage),
+                ),
+                RadioGroup<Locale>(
+                  // 공통으로 관리할 그룹 값과 변경 이벤트를 부모에서 정의.
+                  groupValue: locale,
+                  onChanged: (Locale? value) {
+                    if (value != null) {
+                      context.read<LocaleCubit>().changeLocale(locale: value);
+                    }
+                  },
+                  // 자식 위젯으로 RadioListTile들을 배치.
+                  child: Column(
+                    children: [
+                      RadioListTile(
+                        title: AppText(S.current.profileSettingKr),
+                        value: Locale('ko'),
+                      ),
+                      RadioListTile(
+                        title: AppText(S.current.profileSettingEn),
+                        value: Locale('en'),
+                      ),
+                      RadioListTile(
+                        title: AppText(S.current.profileSettingJa),
+                        value: Locale('ja'),
+                      ),
+                    ],
+                  ),
                 ),
                 const Divider(height: 1),
               ],

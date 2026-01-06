@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '/auth/cubit/user_cubit.dart';
+import '/common/util/locale/generated/l10n.dart';
 import '/common/util/logger.dart';
 import '/common/widget/dialog_widget.dart';
 import '/feed/screen/feed_screen.dart';
@@ -52,13 +53,15 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   // 현재 접속자 정보를 상태관리 데이터로 저장
-  // TODO : 나중에 다국어 지원 시 변경
   Future<void> _getCurrentUser() async {
     try {
       await context.read<UserCubit>().getCurrentUser();
     } catch (e, stackTrace) {
       logger.e(stackTrace.toString());
-      DialogWidget.showAlertDialog(title: '회원정보 로드 오류', msg: e.toString());
+      DialogWidget.showAlertDialog(
+        title: S.current.authUserLoadError,
+        msg: e.toString(),
+      );
     }
   }
 
@@ -88,25 +91,28 @@ class _MainScreenState extends State<MainScreen> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        // TODO: 임시로 선택/비선택 색상 선정 (나중에 테마 부분에서 변경 예정)
-        selectedItemColor: Colors.black54,
-        unselectedItemColor: Colors.grey[400],
         currentIndex: _selectedItemIndex,
         onTap: _onItemTapped,
         items: <BottomNavigationBarItem>[
-          const BottomNavigationBarItem(icon: Icon(Icons.home), label: '홈'),
-          const BottomNavigationBarItem(icon: Icon(Icons.search), label: '검색'),
-          const BottomNavigationBarItem(
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: S.current.bottomMenuHome,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: S.current.bottomMenuSearch,
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.add_a_photo_outlined),
-            label: '등록',
+            label: S.current.bottomMenuNew,
           ),
-          const BottomNavigationBarItem(
+          BottomNavigationBarItem(
             icon: Icon(Icons.videocam_outlined),
-            label: '릴스',
+            label: S.current.bottomMenuReels,
           ),
-          const BottomNavigationBarItem(
+          BottomNavigationBarItem(
             icon: Icon(Icons.person_2_outlined),
-            label: '프로필',
+            label: S.current.bottomMenuProfile,
           ),
         ],
       ),

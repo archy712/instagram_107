@@ -9,7 +9,10 @@ import 'package:validators/validators.dart';
 
 import '/auth/cubit/auth_cubit.dart';
 import '/auth/screen/sign_in_screen.dart';
+import '/common/cubit/custom_theme_cubit.dart';
+import '/common/state/custom_theme_state.dart';
 import '/common/util/global_loading.dart';
+import '/common/util/locale/generated/l10n.dart';
 import '/common/util/logger.dart';
 import '/common/widget/app_text.dart';
 import '/common/widget/app_text_form_field.dart';
@@ -67,12 +70,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   // 로고 이미지 위젯
-  Widget _logoTitleWidget() {
+  Widget _logoTitleWidget({required ThemeModeEnum themeModeEnum}) {
     return SvgPicture.asset(
       'assets/svgs/instagram_letter.svg',
       height: 60,
-      // TODO : 나중에 테마 기능 작성 시 수정 필요
-      colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
+      colorFilter: ColorFilter.mode(
+        themeModeEnum == ThemeModeEnum.dark ? Colors.white : Colors.black,
+        BlendMode.srcIn,
+      ),
     );
   }
 
@@ -107,19 +112,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  /// TODO: 나중에 다국어 지원 시 변경 필요
   // 이메일 입력 위젯
   Widget _emailInputWidget() {
     return AppTextFormField(
       enabled: _isEnabled,
       controller: _emailController,
-      labelText: '이메일',
+      labelText: S.current.signUpEmailText,
       iconData: Icons.email,
-      helperText: '이메일 형식에 맞게 입력해 주세요',
+      helperText: S.current.signUpHelperEmailText,
       validator: (String? value) {
         // 입력을 안했거나, 공백이거나, 이메일 형식이 아니면 유효성 검증 실패
         if (value == null || value.trim().isEmpty || !isEmail(value.trim())) {
-          return '이메일 형식이 올바르지 않습니다!';
+          return S.current.signUpValidatorEmailText1;
         }
         // 이메일 유효성 검증이 통과하면 성공 => null 리턴
         return null;
@@ -132,15 +136,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return AppTextFormField(
       enabled: _isEnabled,
       controller: _nameController,
-      labelText: '이름',
+      labelText: S.current.signUpNameText,
       iconData: Icons.account_circle,
-      helperText: '이름은 최소 3자 이상, 최대 10자 미만으로 입력해 주세요',
+      helperText: S.current.signUpHelperNameText,
       validator: (String? value) {
         if (value == null || value.trim().isEmpty) {
-          return '이름이 올바르지 않습니다!';
+          return S.current.signUpValidatorNameText1;
         }
         if (value.length < 3 || value.length > 10) {
-          return '이름은 최소 3글자, 최대 10글자 이하로 입력 가능합니다!';
+          return S.current.signUpValidatorNameText2;
         }
         return null;
       },
@@ -152,15 +156,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return AppTextFormField(
       enabled: _isEnabled,
       controller: _commentController,
-      labelText: '한 줄 소개',
+      labelText: S.current.signUpCommentText,
       iconData: Icons.comment,
-      helperText: '한줄 소개는 최소 5글자 이상, 20글지 이하 이어야 합니다.',
+      helperText: S.current.signUpHelperCommentText,
       validator: (String? value) {
         if (value == null || value.trim().isEmpty) {
-          return '한줄 소개가 올바르지 않습니다!';
+          return S.current.signUpValidatorCommentText1;
         }
         if (value.length < 5 || value.length > 20) {
-          return '한줄 소개는 최소 5글자, 최대 20글자 이하로 입력 가능합니다!';
+          return S.current.signUpValidatorCommentText2;
         }
         return null;
       },
@@ -173,15 +177,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
       enabled: _isEnabled,
       controller: _passwordController,
       obscureText: true,
-      labelText: '비밀번호',
-      helperText: '비밀번호는 최소 8자, 최대 10자 미만으로 입력해 주세요',
+      labelText: S.current.signUpPasswordText,
+      helperText: S.current.signUpHelperPasswordText,
       iconData: Icons.lock,
       validator: (String? value) {
         if (value == null || value.trim().isEmpty) {
-          return '비밀번호가 올바르지 않습니다!';
+          return S.current.signUpValidatorPasswordText1;
         }
         if (value.length < 3 || value.length > 10) {
-          return '비밀번호는 최소 3글자, 최대 10글자 이하로 입력 가능합니다!';
+          return S.current.signUpValidatorPasswordText2;
         }
         return null;
       },
@@ -193,12 +197,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return AppTextFormField(
       enabled: _isEnabled,
       obscureText: true,
-      labelText: '비밀번호 확인',
-      helperText: '입력한 비밀번호를 다시 한번 입력해 주세요',
+      labelText: S.current.signUpPasswordConfirmText,
+      helperText: S.current.signUpHelperPasswordConfirmText,
       iconData: Icons.lock_clock_rounded,
       validator: (String? value) {
         if (value != _passwordController.text) {
-          return '비밀번호 확인이 올바르지 않습니다!';
+          return S.current.signUpValidatorPasswordText3;
         }
         return null;
       },
@@ -254,9 +258,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   );
 
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
+                    SnackBar(
                       content: AppText(
-                        '가입 인증메일을 전송했습니다!\n인증메일을 클릭해야 정식 가입됩니다!',
+                        S.current.signUpSendVerificationEmailText2,
                         textAlign: TextAlign.center,
                         color: Colors.black,
                       ),
@@ -280,21 +284,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 String errorMessage;
                 switch (e.code) {
                   case 'weak-password':
-                    errorMessage = '비밀번호가 너무 약합니다. 6자리 이상의 비밀번호를 사용해주세요.';
+                    errorMessage = S.current.signUpWeakPasswordErrorMsg;
                     break;
                   case 'email-already-in-use':
-                    errorMessage = '이미 사용 중인 이메일 주소입니다. 다른 이메일로 시도해주세요.';
+                    errorMessage = S.current.signUpEmailAlreadyInUseErrorMsg;
                     break;
                   case 'invalid-email':
-                    errorMessage = '유효하지 않은 이메일 주소 형식입니다. 올바른 이메일 주소를 입력해주세요.';
+                    errorMessage = S.current.signUpInvalidEmailErrorMsg;
                     break;
                   default:
-                    errorMessage = '알 수 없는 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+                    errorMessage = S.current.signUpDefaultErrorMsg;
                     break;
                 }
                 // Dialog Box
                 DialogWidget.showAlertDialog(
-                  title: '회원가입 오류',
+                  title: S.current.signUpErrorTitle,
                   msg: errorMessage,
                 );
               } catch (e, stackTrace) {
@@ -309,7 +313,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 logger.e(stackTrace.toString());
                 // Dialog Box
                 DialogWidget.showAlertDialog(
-                  title: '회원가입 오류',
+                  title: S.current.signUpErrorTitle,
                   msg: e.toString(),
                 );
               }
@@ -318,7 +322,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 15),
       ),
-      child: const AppText('회원가입'),
+      child: AppText(S.current.signUpButtonText),
     );
   }
 
@@ -334,12 +338,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
             }
           : null,
 
-      child: AppText('이미 회원이신가요? 로그인하기', fontSize: 14),
+      child: AppText(S.current.signUpLoginLinkText, fontSize: 14),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    // 테마 모드 확인
+    final ThemeModeEnum themeModeEnum = context
+        .read<CustomThemeCubit>()
+        .state
+        .themeModeEnum;
+
     return PopScope(
       // 뒤로가기 (back) 버튼 비활성화
       canPop: false,
@@ -361,7 +371,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   children: [
                     const SizedBox(height: 20),
                     // 로고 타이틀 위젯
-                    _logoTitleWidget(),
+                    _logoTitleWidget(themeModeEnum: themeModeEnum),
                     const SizedBox(height: 40),
                     // 프로필 이미지 위젯
                     _profileImageWidget(),

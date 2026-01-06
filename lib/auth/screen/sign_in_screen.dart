@@ -5,13 +5,15 @@ import 'package:validators/validators.dart';
 
 import '/auth/cubit/auth_cubit.dart';
 import '/auth/screen/sign_up_screen.dart';
+import '/common/cubit/custom_theme_cubit.dart';
+import '/common/state/custom_theme_state.dart';
 import '/common/util/global_loading.dart';
+import '/common/util/locale/generated/l10n.dart';
 import '/common/util/logger.dart';
 import '/common/widget/app_text.dart';
 import '/common/widget/app_text_form_field.dart';
 import '/common/widget/dialog_widget.dart';
 
-// TODO: 다국어 지원 시 수정 필요
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
 
@@ -42,12 +44,14 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   // 로고 이미지 위젯
-  Widget _logoTitleWidget() {
+  Widget _logoTitleWidget({required ThemeModeEnum themeModeEnum}) {
     return SvgPicture.asset(
       'assets/svgs/instagram_letter.svg',
       height: 60,
-      // TODO: 나중에 테마 기능 작성 시 수정 필요
-      colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
+      colorFilter: ColorFilter.mode(
+        themeModeEnum == ThemeModeEnum.dark ? Colors.white : Colors.black,
+        BlendMode.srcIn,
+      ),
     );
   }
 
@@ -56,13 +60,13 @@ class _SignInScreenState extends State<SignInScreen> {
     return AppTextFormField(
       enabled: _isEnabled,
       controller: _emailController,
-      labelText: '이메일',
-      helperText: '가입할 때 등록한 이메일을 입력해 주세요.',
+      labelText: S.current.loginEmailText,
+      helperText: S.current.signUpHelperEmailText,
       iconData: Icons.email,
       validator: (String? value) {
         // 입력을 안했거나, 공백이거나, 이메일 형식이 아니면 유효성 검증 실패
         if (value == null || value.trim().isEmpty || !isEmail(value.trim())) {
-          return '이메일 형식이 올바르지 않습니다!';
+          return S.current.loginValidatorEmailText1;
         }
         // 이메일 유효성 검증이 통과하면 성공 => null 리턴
         return null;
@@ -76,15 +80,15 @@ class _SignInScreenState extends State<SignInScreen> {
       enabled: _isEnabled,
       controller: _passwordController,
       obscureText: true,
-      labelText: '비밀번호',
-      helperText: '가입할 때 등록한 비밀번호를 입력해 주세요.',
+      labelText: S.current.loginPasswordText,
+      helperText: S.current.signUpHelperPasswordText,
       iconData: Icons.lock,
       validator: (String? value) {
         if (value == null || value.trim().isEmpty) {
-          return '비밀번호가 올바르지 않습니다!';
+          return S.current.loginValidatorPasswordText1;
         }
         if (value.length < 3 || value.length > 10) {
-          return '비밀번호는 최소 3글자, 최대 10글자 이하로 입력 가능합니다!';
+          return S.current.loginValidatorPasswordText2;
         }
         return null;
       },
@@ -152,7 +156,9 @@ class _SignInScreenState extends State<SignInScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: AppText(
-                        '${_emailController.text.trim().toString()}님 반갑습니다!',
+                        S.current.loginGreetingText(
+                          _emailController.text.trim().toString(),
+                        ),
                         textAlign: TextAlign.center,
                         color: Colors.orange,
                       ),
@@ -169,8 +175,8 @@ class _SignInScreenState extends State<SignInScreen> {
 
                 // Dialog Box
                 DialogWidget.showAlertDialog(
-                  title: '로그인 오류',
-                  msg: '회원정보가 일치하지 않습니다.\n로그인 정보를 확인하여 다시 시도해 주세요',
+                  title: S.current.loginErrorTitle,
+                  msg: S.current.loginErrorContent,
                 );
               }
             }
@@ -178,7 +184,7 @@ class _SignInScreenState extends State<SignInScreen> {
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 15),
       ),
-      child: const AppText('로그인'),
+      child: AppText(S.current.loginButtonText),
     );
   }
 
@@ -194,12 +200,18 @@ class _SignInScreenState extends State<SignInScreen> {
             }
           : null,
 
-      child: AppText('회원이 아니신가요? 회원가입하기', fontSize: 14),
+      child: AppText(S.current.loginSignUpLinkText, fontSize: 14),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    // 테마 모드 확인
+    final ThemeModeEnum themeModeEnum = context
+        .read<CustomThemeCubit>()
+        .state
+        .themeModeEnum;
+
     return PopScope(
       // 뒤로가기 (back) 버튼 비활성화
       canPop: false,
@@ -221,7 +233,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   children: [
                     const SizedBox(height: 20),
                     // 로고 타이틀 위젯
-                    _logoTitleWidget(),
+                    _logoTitleWidget(themeModeEnum: themeModeEnum),
                     const SizedBox(height: 60),
                     // 이메일 입력 위젯
                     _emailInputWidget(),
