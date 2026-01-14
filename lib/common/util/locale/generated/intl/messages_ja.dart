@@ -33,6 +33,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "bottomMenuReels": MessageLookupByLibrary.simpleMessage("リール"),
     "bottomMenuSearch": MessageLookupByLibrary.simpleMessage("検索"),
     "controlText": MessageLookupByLibrary.simpleMessage("設定"),
+    "feedCurrentUserError": MessageLookupByLibrary.simpleMessage(
+      "現在アクセスしているユーザー検索エラー",
+    ),
+    "feedFollow": MessageLookupByLibrary.simpleMessage("フォローする"),
+    "feedFollowing": MessageLookupByLibrary.simpleMessage("フォローを解除する"),
+    "feedListError": MessageLookupByLibrary.simpleMessage("フィードの読み込みエラー"),
+    "feedNoFeedList": MessageLookupByLibrary.simpleMessage("登録されたフィードは存在しません。"),
+    "feedRecentlyListError": MessageLookupByLibrary.simpleMessage(
+      "最新のフィード読み込みエラー",
+    ),
     "loginButtonText": MessageLookupByLibrary.simpleMessage("ログイン"),
     "loginEmailText": MessageLookupByLibrary.simpleMessage("Eメール"),
     "loginErrorContent": MessageLookupByLibrary.simpleMessage(

@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '/feed/model/feed_model.dart';
+
 // 피드 진행상태
 enum FeedStatusEnum {
   // 초기 상태
@@ -18,19 +20,38 @@ enum FeedStatusEnum {
 class FeedState extends Equatable {
   // 피드 진행상태
   final FeedStatusEnum feedStatusEnum;
-  // 생성자
-  const FeedState({required this.feedStatusEnum});
+  // 상단 Top Feed List
+  final List<FeedModel> recentlyFeedList;
+  // 피드 목록
+  final List<FeedModel> feedList;
 
+  // 생성자
+  const FeedState({
+    required this.feedStatusEnum,
+    required this.recentlyFeedList,
+    required this.feedList,
+  });
   // factory init() constructor
   factory FeedState.init() {
-    return FeedState(feedStatusEnum: FeedStatusEnum.init);
+    return FeedState(
+      feedStatusEnum: FeedStatusEnum.init,
+      recentlyFeedList: [],
+      feedList: [],
+    );
   }
-
   // copyWith method
-  FeedState copyWith({FeedStatusEnum? feedStatusEnum}) {
-    return FeedState(feedStatusEnum: feedStatusEnum ?? this.feedStatusEnum);
+  FeedState copyWith({
+    FeedStatusEnum? feedStatusEnum,
+    List<FeedModel>? recentlyFeedList,
+    List<FeedModel>? feedList,
+  }) {
+    return FeedState(
+      feedStatusEnum: feedStatusEnum ?? this.feedStatusEnum,
+      recentlyFeedList: recentlyFeedList ?? this.recentlyFeedList,
+      feedList: feedList ?? this.feedList,
+    );
   }
 
   @override
-  List<Object?> get props => [feedStatusEnum];
+  List<Object?> get props => [feedStatusEnum, recentlyFeedList, feedList];
 }

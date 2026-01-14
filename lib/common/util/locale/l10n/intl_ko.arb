@@ -61,5 +61,11 @@
   "newFeedTypeImage": "이미지",
   "newFeedTypeVideo": "동영상",
   "newFeedUploadSuccess": "피드가 업로드 되었습니다.",
-  "newFeedErrorTitle": "피드 업로드 오류"
+  "newFeedErrorTitle": "피드 업로드 오류",
+  "feedRecentlyListError": "최신 피드 로딩 오류",
+  "feedListError": "피드 로딩 오류",
+  "feedNoFeedList": "등록된 피드가 존재하지 않습니다.",
+  "feedCurrentUserError": "현재 접속한 사용자 조회 오류",
+  "feedFollow": "팔로우",
+  "feedFollowing": "팔로잉"
 }

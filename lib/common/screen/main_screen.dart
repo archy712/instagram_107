@@ -65,6 +65,20 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
+  // 피드 업로드 후 실행 함수
+  void _onFeedUpload() {
+    setState(() {
+      // BottomNavigation 인덱스 변경
+      _selectedItemIndex = 0;
+      // PageView 이동
+      _pageController.animateToPage(
+        0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.ease,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,13 +91,13 @@ class _MainScreenState extends State<MainScreen> {
             _selectedItemIndex = index;
           });
         },
-        children: const <Widget>[
+        children: <Widget>[
           // 피드 리스트
           FeedScreen(),
           // 검색
           SearchScreen(),
           // 새 피드
-          NewScreen(),
+          NewScreen(onFeedUploaded: _onFeedUpload),
           // 릴스
           ReelsScreen(),
           // 프로필

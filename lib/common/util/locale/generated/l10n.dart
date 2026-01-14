@@ -603,6 +603,56 @@ class S {
       args: [],
     );
   }
+
+  /// `Error loading latest feed`
+  String get feedRecentlyListError {
+    return Intl.message(
+      'Error loading latest feed',
+      name: 'feedRecentlyListError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Feed loading error`
+  String get feedListError {
+    return Intl.message(
+      'Feed loading error',
+      name: 'feedListError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `There are no registered feeds.`
+  String get feedNoFeedList {
+    return Intl.message(
+      'There are no registered feeds.',
+      name: 'feedNoFeedList',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error in querying currently connected users`
+  String get feedCurrentUserError {
+    return Intl.message(
+      'Error in querying currently connected users',
+      name: 'feedCurrentUserError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `follow`
+  String get feedFollow {
+    return Intl.message('follow', name: 'feedFollow', desc: '', args: []);
+  }
+
+  /// `unfollow`
+  String get feedFollowing {
+    return Intl.message('unfollow', name: 'feedFollowing', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

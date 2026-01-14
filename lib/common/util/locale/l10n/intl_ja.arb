@@ -61,5 +61,11 @@
   "newFeedTypeImage": "イメージ",
   "newFeedTypeVideo": "動画",
   "newFeedUploadSuccess": "フィードがアップロードされました。",
-  "newFeedErrorTitle": "フィードアップロードエラー"
+  "newFeedErrorTitle": "フィードアップロードエラー",
+  "feedRecentlyListError": "最新のフィード読み込みエラー",
+  "feedListError": "フィードの読み込みエラー",
+  "feedNoFeedList": "登録されたフィードは存在しません。",
+  "feedCurrentUserError": "現在アクセスしているユーザー検索エラー",
+  "feedFollow": "フォローする",
+  "feedFollowing": "フォローを解除する"
 }

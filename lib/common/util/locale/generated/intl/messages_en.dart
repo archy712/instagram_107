@@ -33,6 +33,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "bottomMenuReels": MessageLookupByLibrary.simpleMessage("Reels"),
     "bottomMenuSearch": MessageLookupByLibrary.simpleMessage("Search"),
     "controlText": MessageLookupByLibrary.simpleMessage("Settings"),
+    "feedCurrentUserError": MessageLookupByLibrary.simpleMessage(
+      "Error in querying currently connected users",
+    ),
+    "feedFollow": MessageLookupByLibrary.simpleMessage("follow"),
+    "feedFollowing": MessageLookupByLibrary.simpleMessage("unfollow"),
+    "feedListError": MessageLookupByLibrary.simpleMessage("Feed loading error"),
+    "feedNoFeedList": MessageLookupByLibrary.simpleMessage(
+      "There are no registered feeds.",
+    ),
+    "feedRecentlyListError": MessageLookupByLibrary.simpleMessage(
+      "Error loading latest feed",
+    ),
     "loginButtonText": MessageLookupByLibrary.simpleMessage("Sign In"),
     "loginEmailText": MessageLookupByLibrary.simpleMessage("Email"),
     "loginErrorContent": MessageLookupByLibrary.simpleMessage(

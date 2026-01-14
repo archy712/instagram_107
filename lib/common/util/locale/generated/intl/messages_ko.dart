@@ -33,6 +33,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "bottomMenuReels": MessageLookupByLibrary.simpleMessage("릴스"),
     "bottomMenuSearch": MessageLookupByLibrary.simpleMessage("검색"),
     "controlText": MessageLookupByLibrary.simpleMessage("설정"),
+    "feedCurrentUserError": MessageLookupByLibrary.simpleMessage(
+      "현재 접속한 사용자 조회 오류",
+    ),
+    "feedFollow": MessageLookupByLibrary.simpleMessage("팔로우"),
+    "feedFollowing": MessageLookupByLibrary.simpleMessage("팔로잉"),
+    "feedListError": MessageLookupByLibrary.simpleMessage("피드 로딩 오류"),
+    "feedNoFeedList": MessageLookupByLibrary.simpleMessage(
+      "등록된 피드가 존재하지 않습니다.",
+    ),
+    "feedRecentlyListError": MessageLookupByLibrary.simpleMessage(
+      "최신 피드 로딩 오류",
+    ),
     "loginButtonText": MessageLookupByLibrary.simpleMessage("로그인"),
     "loginEmailText": MessageLookupByLibrary.simpleMessage("이메일"),
     "loginErrorContent": MessageLookupByLibrary.simpleMessage(

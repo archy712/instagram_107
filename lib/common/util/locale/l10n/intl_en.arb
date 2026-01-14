@@ -61,5 +61,11 @@
   "newFeedTypeImage": "IMAGE",
   "newFeedTypeVideo": "VIDEO",
   "newFeedUploadSuccess": "The feed has been uploaded.",
-  "newFeedErrorTitle": "Feed upload error"
+  "newFeedErrorTitle": "Feed upload error",
+  "feedRecentlyListError": "Error loading latest feed",
+  "feedListError": "Feed loading error",
+  "feedNoFeedList": "There are no registered feeds.",
+  "feedCurrentUserError": "Error in querying currently connected users",
+  "feedFollow": "follow",
+  "feedFollowing": "unfollow"
 }

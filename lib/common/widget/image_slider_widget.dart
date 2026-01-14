@@ -3,6 +3,10 @@ import 'dart:io';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '/feed/cubit/feed_cubit.dart';
+import '/feed/state/feed_state.dart';
 
 class ImageSliderWidget extends StatefulWidget {
   // 이미지 리스트 경로
@@ -28,6 +32,25 @@ class ImageSliderWidget extends StatefulWidget {
 class _ImageSliderWidgetState extends State<ImageSliderWidget> {
   // 슬라이드에서 현재 보여지는 인덱스
   int showedIndex = 0;
+
+  // 이미지 확대/축소 기능을 위한 함수
+  Widget _imageZoomInOutWidget(String imageUrl) {
+    return GestureDetector(
+      onTap: () => showGeneralDialog(
+        context: context,
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return InteractiveViewer(
+            child: GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: _imageWidget(imageUrl),
+            ),
+          );
+        },
+      ),
+
+      child: _imageWidget(imageUrl),
+    );
+  }
 
   // 이미지를 보여주는 함수
   Widget _imageWidget(String imageUrl) {
@@ -68,6 +91,12 @@ class _ImageSliderWidgetState extends State<ImageSliderWidget> {
 
   @override
   Widget build(BuildContext context) {
+    // 피드 업로드 상태
+    final FeedStatusEnum feedStatusEnum = context
+        .watch<FeedCubit>()
+        .state
+        .feedStatusEnum;
+
     return SizedBox(
       child: Stack(
         children: [
@@ -87,7 +116,7 @@ class _ImageSliderWidgetState extends State<ImageSliderWidget> {
               },
             ),
             itemBuilder: (context, index, _) {
-              return _imageWidget(widget.images[index]);
+              return _imageZoomInOutWidget(widget.images[index]);
             },
           ),
           // 2> 슬라이드 내 이미지 삭제 버튼 (등록 모드일 때)
@@ -96,11 +125,14 @@ class _ImageSliderWidgetState extends State<ImageSliderWidget> {
               top: 10,
               right: 10,
               child: InkWell(
-                onTap: () {
-                  setState(() {
-                    widget.images.removeAt(showedIndex);
-                  });
-                },
+                // 피드 올리는 중이라면 이미지 [삭제, X표시] 버튼 비활성화
+                onTap: feedStatusEnum == FeedStatusEnum.submitting
+                    ? null
+                    : () {
+                        setState(() {
+                          widget.images.removeAt(showedIndex);
+                        });
+                      },
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.4),

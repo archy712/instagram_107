@@ -7,14 +7,19 @@ import 'package:image_picker/image_picker.dart';
 import '/common/util/global_loading.dart';
 import '/common/util/locale/generated/l10n.dart';
 import '/common/util/logger.dart';
+import '/common/widget/app_text.dart';
 import '/common/widget/chewie_widget.dart';
 import '/common/widget/dialog_widget.dart';
 import '/common/widget/image_slider_widget.dart';
 import '/feed/cubit/feed_cubit.dart';
 import '/feed/enum/feed_type_enum.dart';
+import '/feed/state/feed_state.dart';
 
 class NewScreen extends StatefulWidget {
-  const NewScreen({super.key});
+  // 게시글 업로드 후 실행될 Callback 함수
+  final VoidCallback onFeedUploaded;
+
+  const NewScreen({super.key, required this.onFeedUploaded});
   @override
   State<NewScreen> createState() => _NewScreenState();
 }
@@ -193,6 +198,20 @@ class _NewScreenState extends State<NewScreen> {
       );
       // 로딩 종료
       GlobalLoading.showLoading(false);
+      // SnackBar 메시지 표시
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: AppText(
+              S.current.newFeedUploadSuccess,
+              textAlign: TextAlign.center,
+            ),
+            duration: Duration(seconds: 10),
+          ),
+        );
+      }
+      // 업로드 수행 후 전송된 함수 실행
+      widget.onFeedUploaded();
     } catch (e, stackTrace) {
       // 로딩 종료
       GlobalLoading.showLoading(false);
@@ -206,19 +225,31 @@ class _NewScreenState extends State<NewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // 피드 업로드 상태
+    final FeedStatusEnum feedStatusEnum = context
+        .watch<FeedCubit>()
+        .state
+        .feedStatusEnum;
+
     return Scaffold(
       appBar: AppBar(
         // leading 속성을 사용하여 기본 뒤로 가기 버튼을 대체
         // 클릭하면 홈 화면인 피드 화면으로 분기
-        leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: () {}),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: widget.onFeedUploaded,
+        ),
         title: Text(S.current.newFeedTitleText),
         centerTitle: true,
         actions: [
           TextButton(
-            onPressed: () {
-              // 피드 올리기
-              _feedUpload(context);
-            },
+            // 피드 올리는 중이라면 [피드 업로드] 버튼 비활성화
+            onPressed: feedStatusEnum == FeedStatusEnum.submitting
+                ? null
+                : () {
+                    // 피드 올리기
+                    _feedUpload(context);
+                  },
             child: Text(
               S.current.newFeedUploadText,
               style: TextStyle(
@@ -233,6 +264,15 @@ class _NewScreenState extends State<NewScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            // 업로드 중 막대 애니메이션 표시
+            LinearProgressIndicator(
+              backgroundColor: Colors.transparent,
+              // null 이면 움직이고, null 아니면 움직이지 않음
+              value: feedStatusEnum == FeedStatusEnum.submitting ? null : 1,
+              color: feedStatusEnum == FeedStatusEnum.submitting
+                  ? Colors.red
+                  : Colors.transparent,
+            ),
             GestureDetector(
               onTap: () {
                 // 미디어 타입 선택
