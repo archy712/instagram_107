@@ -67,5 +67,6 @@
   "feedNoFeedList": "There are no registered feeds.",
   "feedCurrentUserError": "Error in querying currently connected users",
   "feedFollow": "follow",
-  "feedFollowing": "unfollow"
+  "feedFollowing": "unfollow",
+  "feedFollowFollowingError": "Feed follow/following Error"
 }

@@ -37,6 +37,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "현재 접속한 사용자 조회 오류",
     ),
     "feedFollow": MessageLookupByLibrary.simpleMessage("팔로우"),
+    "feedFollowFollowingError": MessageLookupByLibrary.simpleMessage(
+      "피드 팔로우/팔로잉 오류",
+    ),
     "feedFollowing": MessageLookupByLibrary.simpleMessage("팔로잉"),
     "feedListError": MessageLookupByLibrary.simpleMessage("피드 로딩 오류"),
     "feedNoFeedList": MessageLookupByLibrary.simpleMessage(

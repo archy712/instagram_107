@@ -67,5 +67,6 @@
   "feedNoFeedList": "登録されたフィードは存在しません。",
   "feedCurrentUserError": "現在アクセスしているユーザー検索エラー",
   "feedFollow": "フォローする",
-  "feedFollowing": "フォローを解除する"
+  "feedFollowing": "フォローを解除する",
+  "feedFollowFollowingError": "フィードフォロー/フォローエラー"
 }

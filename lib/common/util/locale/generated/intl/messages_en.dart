@@ -37,6 +37,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Error in querying currently connected users",
     ),
     "feedFollow": MessageLookupByLibrary.simpleMessage("follow"),
+    "feedFollowFollowingError": MessageLookupByLibrary.simpleMessage(
+      "Feed follow/following Error",
+    ),
     "feedFollowing": MessageLookupByLibrary.simpleMessage("unfollow"),
     "feedListError": MessageLookupByLibrary.simpleMessage("Feed loading error"),
     "feedNoFeedList": MessageLookupByLibrary.simpleMessage(

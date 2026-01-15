@@ -35,4 +35,32 @@ class UserCubit extends Cubit<UserState> {
       rethrow;
     }
   }
+
+  // follow / unfollow 처리
+  Future<void> followUser({
+    required String currentUserUid,
+    required String followUid,
+  }) async {
+    // 작업을 submitting 으로 변경
+    emit(state.copyWith(userStatusEnum: UserStatusEnum.submitting));
+    try {
+      // Repository 이용해서 follow / unfollow 처리
+      UserModel userModel = await userRepository.followUser(
+        currentUserUid: currentUserUid,
+        followUid: followUid,
+      );
+      // 작업이 성공적으로 끝나면 [success]로 변경
+      emit(
+        state.copyWith(
+          userStatusEnum: UserStatusEnum.success,
+          userModel: userModel,
+        ),
+      );
+    } catch (_) {
+      // 작업 실패 시 [error]로 상태 변경
+      emit(state.copyWith(userStatusEnum: UserStatusEnum.error));
+      // 호출한 곳으로 처리 위임
+      rethrow;
+    }
+  }
 }

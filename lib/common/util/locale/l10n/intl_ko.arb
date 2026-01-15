@@ -67,5 +67,6 @@
   "feedNoFeedList": "등록된 피드가 존재하지 않습니다.",
   "feedCurrentUserError": "현재 접속한 사용자 조회 오류",
   "feedFollow": "팔로우",
-  "feedFollowing": "팔로잉"
+  "feedFollowing": "팔로잉",
+  "feedFollowFollowingError": "피드 팔로우/팔로잉 오류"
 }

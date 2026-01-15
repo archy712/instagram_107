@@ -37,6 +37,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "現在アクセスしているユーザー検索エラー",
     ),
     "feedFollow": MessageLookupByLibrary.simpleMessage("フォローする"),
+    "feedFollowFollowingError": MessageLookupByLibrary.simpleMessage(
+      "フィードフォロー/フォローエラー",
+    ),
     "feedFollowing": MessageLookupByLibrary.simpleMessage("フォローを解除する"),
     "feedListError": MessageLookupByLibrary.simpleMessage("フィードの読み込みエラー"),
     "feedNoFeedList": MessageLookupByLibrary.simpleMessage("登録されたフィードは存在しません。"),

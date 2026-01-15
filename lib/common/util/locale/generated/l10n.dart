@@ -653,6 +653,16 @@ class S {
   String get feedFollowing {
     return Intl.message('unfollow', name: 'feedFollowing', desc: '', args: []);
   }
+
+  /// `Feed follow/following Error`
+  String get feedFollowFollowingError {
+    return Intl.message(
+      'Feed follow/following Error',
+      name: 'feedFollowFollowingError',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
