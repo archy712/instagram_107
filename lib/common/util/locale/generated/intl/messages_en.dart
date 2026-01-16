@@ -33,6 +33,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "bottomMenuReels": MessageLookupByLibrary.simpleMessage("Reels"),
     "bottomMenuSearch": MessageLookupByLibrary.simpleMessage("Search"),
     "controlText": MessageLookupByLibrary.simpleMessage("Settings"),
+    "feedBookmarkError": MessageLookupByLibrary.simpleMessage(
+      "Feed bookmark processing error",
+    ),
     "feedCurrentUserError": MessageLookupByLibrary.simpleMessage(
       "Error in querying currently connected users",
     ),
@@ -41,6 +44,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Feed follow/following Error",
     ),
     "feedFollowing": MessageLookupByLibrary.simpleMessage("unfollow"),
+    "feedLikeError": MessageLookupByLibrary.simpleMessage(
+      "Feed like processing error",
+    ),
     "feedListError": MessageLookupByLibrary.simpleMessage("Feed loading error"),
     "feedNoFeedList": MessageLookupByLibrary.simpleMessage(
       "There are no registered feeds.",

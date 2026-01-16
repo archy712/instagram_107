@@ -663,6 +663,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Feed like processing error`
+  String get feedLikeError {
+    return Intl.message(
+      'Feed like processing error',
+      name: 'feedLikeError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Feed bookmark processing error`
+  String get feedBookmarkError {
+    return Intl.message(
+      'Feed bookmark processing error',
+      name: 'feedBookmarkError',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

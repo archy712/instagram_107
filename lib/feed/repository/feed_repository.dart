@@ -194,4 +194,144 @@ class FeedRepository {
       rethrow;
     }
   }
+
+  // 좋아요 기능
+  Future<FeedModel> likeFeed({
+    // 피드 ID
+    required String feedId,
+    // 해당 피드를 좋아요 누른 유저들의 uid 리스트
+    required List<String> feedLikes,
+    // 해당 피드를 좋아요 누른 사용자의 uid
+    required String uid,
+    // 현재 유저가 좋아요를 누른 피드의 feedId 리스트
+    required List<String> userLikes,
+  }) async {
+    try {
+      // 파라미터 uid 해당하는 [users] Collection Reference
+      DocumentReference<Map<String, dynamic>> userDocRef = firebaseFirestore
+          .collection('users')
+          .doc(uid);
+      // 파라미터 feedId 해당하는 [feeds] Collection Reference
+      DocumentReference<Map<String, dynamic>> feedDocRef = firebaseFirestore
+          .collection('feeds')
+          .doc(feedId);
+      // feeds 컬렉션
+      // 피드를 좋아하는 유저 목록 : likes 필드에 uid 포함되어 있는지 확인
+      // 포함 : 좋아요 취소, 피드 likes 필드에서 uid 삭제, likeCount 1 감소
+      // 미포함 : 좋아요 처리, 피드 likes 필드에서 uid 추가, likeCount 1 증가
+      // users 컬렉션
+      // 유저가 좋아하는 피드 목록 likes 필드에 feedId 포함되어 있는지 확인
+      // 포함 : 좋아요 취소, likes 필드에서 feedId 삭제
+      // 미포함 : 좋아요 처리, likes 필드에서 feedId 추가
+      // 트랜잭션 : WriteBatch, Transaction 방식 중 Transaction 사용
+      // WriteBatch 방식은 commit 처리 필요, Transaction 방식은 commit 처리 불필요
+      await firebaseFirestore.runTransaction((transaction) async {
+        // feeds 컬렉션의 likes 필드에 해당 uid 포함되어 있는지 확인
+        bool isFeedContains = feedLikes.contains(uid);
+        // feeds 컬렉션
+        transaction.update(feedDocRef, {
+          'likes': isFeedContains
+              ? FieldValue.arrayRemove([uid])
+              : FieldValue.arrayUnion([uid]),
+          'likeCount': isFeedContains
+              ? FieldValue.increment(-1)
+              : FieldValue.increment(1),
+        });
+        // users 컬렉션
+        transaction.update(userDocRef, {
+          'likes': userLikes.contains(feedId)
+              ? FieldValue.arrayRemove([feedId])
+              : FieldValue.arrayUnion([feedId]),
+        });
+      });
+
+      // 화면에 갱신된 feed 보여주기 위해서 적용된 FeedModel 조회 & 리턴
+      // 1> feed map 데이터 얻기
+      Map<String, dynamic> feedMapData = await feedDocRef.get().then(
+        (value) => value.data()!,
+      );
+      // 2> feed map 데이터 중 'writer' 부분의 map data 얻어서
+      DocumentReference<Map<String, dynamic>> writerDocRef =
+          feedMapData['writer'];
+      // 3> user/~ 데이터가 가리키는 users 컬렉션의 Map Data 얻기
+      Map<String, dynamic> userMapData = await writerDocRef.get().then(
+        (value) => value.data()!,
+      );
+      // 4> UserModel 구하기
+      UserModel userModel = UserModel.fromMap(userMapData);
+      feedMapData['writer'] = userModel;
+      // 5> FeedModel 리턴
+      return FeedModel.fromMap(feedMapData);
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  // 북마크 기능
+  Future<FeedModel> bookmarkFeed({
+    // 피드 ID
+    required String feedId,
+    // 해당 피드를 북마크 누른 유저들의 uid 리스트
+    required List<String> feedBookmarks,
+    // 해당 피드를 북마크 누른 사용자의 uid
+    required String uid,
+    // 현재 유저가 북마크 누른 피드의 feedId 리스트
+    required List<String> userBookmarks,
+  }) async {
+    try {
+      // 파라미터 uid 해당하는 [users] Collection Reference
+      DocumentReference<Map<String, dynamic>> userDocRef = firebaseFirestore
+          .collection('users')
+          .doc(uid);
+      // 파라미터 feedId 해당하는 [feeds] Collection Reference
+      DocumentReference<Map<String, dynamic>> feedDocRef = firebaseFirestore
+          .collection('feeds')
+          .doc(feedId);
+      // feeds 컬렉션
+      // 피드를 북마크 처리한 유저 목록 : bookmarks 필드에 uid 포함되어 있는지 확인
+      // 포함 : 북마크 취소, 피드 bookmarks 필드에서 uid 삭제
+      // 미포함 : 북마크 처리, 피드 bookmarks 필드에서 uid 추가
+      // users 컬렉션
+      // 유저가 북마크 한 피드 목록 bookmarks 필드에 feedId 포함되어 있는지 확인
+      // 포함 : 북마크 취소, bookmarks 필드에서 feedId 삭제
+      // 미포함 : 북마크 처리, bookmarks 필드에서 feedId 추가
+      // 트랜잭션 : WriteBatch, Transaction 방식 중 Transaction 사용
+      // WriteBatch 방식은 commit 처리 필요, Transaction 방식은 commit 처리 불필요
+      await firebaseFirestore.runTransaction((transaction) async {
+        // feeds 컬렉션의 bookmarks 필드에 해당 uid 포함되어 있는지 확인
+        bool isFeedContains = feedBookmarks.contains(uid);
+        // feeds 컬렉션
+        transaction.update(feedDocRef, {
+          'bookmarks': isFeedContains
+              ? FieldValue.arrayRemove([uid])
+              : FieldValue.arrayUnion([uid]),
+        });
+        // users 컬렉션
+        transaction.update(userDocRef, {
+          'bookmarks': userBookmarks.contains(feedId)
+              ? FieldValue.arrayRemove([feedId])
+              : FieldValue.arrayUnion([feedId]),
+        });
+      });
+      // 화면에 갱신된 feed 보여주기 위해서 적용된 FeedModel 조회 & 리턴
+      // 1> feed map 데이터 얻기
+      Map<String, dynamic> feedMapData = await feedDocRef.get().then(
+        (value) => value.data()!,
+      );
+      // 2> feed map 데이터 중 'writer' 부분의 map data 얻어서
+      DocumentReference<Map<String, dynamic>> writerDocRef =
+          feedMapData['writer'];
+      // 3> user/~ 데이터가 가리키는 users 컬렉션의 Map Data 얻기
+      Map<String, dynamic> userMapData = await writerDocRef.get().then(
+        (value) => value.data()!,
+      );
+      // 4> UserModel 구하기
+      UserModel userModel = UserModel.fromMap(userMapData);
+      feedMapData['writer'] = userModel;
+      // 5> FeedModel 리턴
+      return FeedModel.fromMap(feedMapData);
+    } catch (_) {
+      rethrow;
+    }
+  }
 }

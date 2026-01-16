@@ -87,8 +87,10 @@ class MyApp extends StatelessWidget {
           ),
           // 피드 관리 (업로드, 목록)
           BlocProvider(
-            create: (context) =>
-                FeedCubit(feedRepository: context.read<FeedRepository>()),
+            create: (context) => FeedCubit(
+              feedRepository: context.read<FeedRepository>(),
+              userRepository: context.read<UserRepository>(),
+            ),
           ),
         ],
         child: GlobalLoaderOverlay(

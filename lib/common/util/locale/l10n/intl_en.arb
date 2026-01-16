@@ -68,5 +68,7 @@
   "feedCurrentUserError": "Error in querying currently connected users",
   "feedFollow": "follow",
   "feedFollowing": "unfollow",
-  "feedFollowFollowingError": "Feed follow/following Error"
+  "feedFollowFollowingError": "Feed follow/following Error",
+  "feedLikeError": "Feed like processing error",
+  "feedBookmarkError": "Feed bookmark processing error"
 }

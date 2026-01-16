@@ -68,5 +68,7 @@
   "feedCurrentUserError": "現在アクセスしているユーザー検索エラー",
   "feedFollow": "フォローする",
   "feedFollowing": "フォローを解除する",
-  "feedFollowFollowingError": "フィードフォロー/フォローエラー"
+  "feedFollowFollowingError": "フィードフォロー/フォローエラー",
+  "feedLikeError": "フィードのような処理エラー",
+  "feedBookmarkError": "フィードブックマーク処理エラー"
 }
