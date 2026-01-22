@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '/auth/cubit/user_cubit.dart';
+import '/auth/model/user_model.dart';
 import '/common/widget/app_text.dart';
 import '/profile/widget/profile_app_bar_sheet.dart';
 
-// TODO: 다국어 지원 시 수정 필요
 class ProfileAppBarWidget extends StatelessWidget
     implements PreferredSizeWidget {
-  const ProfileAppBarWidget({super.key});
+  // 사용자 모델
+  final UserModel userModel;
+
+  const ProfileAppBarWidget({super.key, required this.userModel});
+
   @override
   // kToolbarHeight: 기본 AppBar 높이
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+
   @override
   Widget build(BuildContext context) {
     return AppBar(
       // leading 아이콘 제거 : 3가지 방법 중 하나
       // Container(), SizedBox.shrink()
       automaticallyImplyLeading: false,
-      title: AppText(
-        context.read<UserCubit>().state.userModel.name,
-        fontSize: 20,
-      ),
+      title: AppText(userModel.name, fontSize: 20),
       actions: [
         IconButton(icon: const Icon(Icons.add_box_outlined), onPressed: () {}),
         IconButton(

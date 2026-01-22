@@ -18,7 +18,9 @@ import '/common/state/custom_theme_state.dart';
 import '/common/util/locale/generated/l10n.dart';
 import '/feed/cubit/feed_cubit.dart';
 import '/feed/repository/feed_repository.dart';
+import '/profile/cubit/profile_cubit.dart';
 import 'firebase_options.dart';
+import 'profile/repository/profile_repository.dart';
 
 // showDialog() 함수를 화면 어디에서나 사용하기 위해 GlobalKey<NavigatorState> 객체 선언
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -66,6 +68,11 @@ class MyApp extends StatelessWidget {
             firebaseStorage: firebaseStorage,
           ),
         ),
+        // 프로필 Repository
+        RepositoryProvider(
+          create: (context) =>
+              ProfileRepository(firebaseFirestore: firebaseFirestore),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -90,6 +97,13 @@ class MyApp extends StatelessWidget {
             create: (context) => FeedCubit(
               feedRepository: context.read<FeedRepository>(),
               userRepository: context.read<UserRepository>(),
+            ),
+          ),
+          // 프로필 Cubit
+          BlocProvider(
+            create: (context) => ProfileCubit(
+              profileRepository: context.read<ProfileRepository>(),
+              feedRepository: context.read<FeedRepository>(),
             ),
           ),
         ],

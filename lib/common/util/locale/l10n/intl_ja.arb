@@ -70,5 +70,14 @@
   "feedFollowing": "フォローを解除する",
   "feedFollowFollowingError": "フィードフォロー/フォローエラー",
   "feedLikeError": "フィードのような処理エラー",
-  "feedBookmarkError": "フィードブックマーク処理エラー"
+  "feedBookmarkError": "フィードブックマーク処理エラー",
+  "profileSummeryFeed": "私のフィード",
+  "profileSummeryFollower": "フォロワー",
+  "profileSummeryFollowing": "続く",
+  "profileEditUserProfile": "プロフィール編集",
+  "profileShareUserProfile": "プロフィールの共有",
+  "profileTabMyFeed": "私のフィード",
+  "profileTabLike": "のように",
+  "profileTabBookmark": "ブックマーク",
+  "profileStateError": "プロファイルステータス検索エラー"
 }

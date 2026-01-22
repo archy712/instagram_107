@@ -95,14 +95,31 @@ class MessageLookup extends MessageLookupByLibrary {
     "newSelectVideo": MessageLookupByLibrary.simpleMessage(
       "Select Video - Reels",
     ),
+    "profileEditUserProfile": MessageLookupByLibrary.simpleMessage(
+      "Profile Edit",
+    ),
     "profileLanguage": MessageLookupByLibrary.simpleMessage("Language"),
     "profileLogout": MessageLookupByLibrary.simpleMessage("Log Out"),
     "profileSettingEn": MessageLookupByLibrary.simpleMessage("English"),
     "profileSettingJa": MessageLookupByLibrary.simpleMessage("Japanese"),
     "profileSettingKr": MessageLookupByLibrary.simpleMessage("Korean"),
+    "profileShareUserProfile": MessageLookupByLibrary.simpleMessage(
+      "Profile Share",
+    ),
+    "profileStateError": MessageLookupByLibrary.simpleMessage(
+      "Profile status inquiry error",
+    ),
     "profileSubTitle": MessageLookupByLibrary.simpleMessage(
       "Change the screen theme.",
     ),
+    "profileSummeryFeed": MessageLookupByLibrary.simpleMessage("My Feed"),
+    "profileSummeryFollower": MessageLookupByLibrary.simpleMessage("Follower"),
+    "profileSummeryFollowing": MessageLookupByLibrary.simpleMessage(
+      "Following",
+    ),
+    "profileTabBookmark": MessageLookupByLibrary.simpleMessage("Bookmark"),
+    "profileTabLike": MessageLookupByLibrary.simpleMessage("Like"),
+    "profileTabMyFeed": MessageLookupByLibrary.simpleMessage("My Feed"),
     "profileThemeTitle": MessageLookupByLibrary.simpleMessage("Screen Theme"),
     "signUpButtonText": MessageLookupByLibrary.simpleMessage("Sign Up"),
     "signUpCommentText": MessageLookupByLibrary.simpleMessage(

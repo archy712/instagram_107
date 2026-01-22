@@ -165,12 +165,13 @@ class FeedRepository {
   }
 
   // 피드 목록 가져오기
-  Future<List<FeedModel>> getFeedList() async {
+  Future<List<FeedModel>> getFeedList({String? uid}) async {
     try {
       // feeds 컬렉션 데이터를 날짜 순으로 가져오기
       QuerySnapshot<Map<String, dynamic>> feedsSnapshot =
           await firebaseFirestore
               .collection('feeds')
+              .where('uid', isEqualTo: uid) // null 이면 조건이 없는 것과 같음
               .orderBy('createdAt', descending: true)
               .get();
       // writer 값을 가져오기 위한 처리 + List<FeedModel> 반환
@@ -330,6 +331,70 @@ class FeedRepository {
       feedMapData['writer'] = userModel;
       // 5> FeedModel 리턴
       return FeedModel.fromMap(feedMapData);
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  // 좋아요 처리된 목록 가져오기
+  Future<List<FeedModel>> getLikeFeedList({String? uid}) async {
+    try {
+      // feeds 컬렉션 데이터를 날짜 순으로 가져오기
+      QuerySnapshot<Map<String, dynamic>> feedsSnapshot =
+          await firebaseFirestore
+              .collection('feeds')
+              .where('likes', arrayContains: uid)
+              .orderBy('createdAt', descending: true)
+              .get();
+      // writer 값을 가져오기 위한 처리 + List<FeedModel> 반환
+      return await Future.wait(
+        feedsSnapshot.docs.map((doc) async {
+          // 1개의 문서를 fetch
+          Map<String, dynamic> feedData = doc.data();
+          // 작성자의 Reference 구해서 get() 함수로 snapshot 구함
+          DocumentReference<Map<String, dynamic>> writerDocRef =
+              feedData['writer'];
+          DocumentSnapshot<Map<String, dynamic>> writerSnapshot =
+              await writerDocRef.get();
+          // 피드를 작성한 유저의 정보를 UserModel
+          UserModel userModel = UserModel.fromMap(writerSnapshot.data()!);
+          feedData['writer'] = userModel;
+          // 1개의 피드를 반환
+          return FeedModel.fromMap(feedData);
+        }),
+      );
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  // 북마크 처리된 목록 가져오기
+  Future<List<FeedModel>> getBookmarkFeedList({String? uid}) async {
+    try {
+      // feeds 컬렉션 데이터를 날짜 순으로 가져오기
+      QuerySnapshot<Map<String, dynamic>> feedsSnapshot =
+          await firebaseFirestore
+              .collection('feeds')
+              .where('bookmarks', arrayContains: uid)
+              .orderBy('createdAt', descending: true)
+              .get();
+      // writer 값을 가져오기 위한 처리 + List<FeedModel> 반환
+      return await Future.wait(
+        feedsSnapshot.docs.map((doc) async {
+          // 1개의 문서를 fetch
+          Map<String, dynamic> feedData = doc.data();
+          // 작성자의 Reference 구해서 get() 함수로 snapshot 구함
+          DocumentReference<Map<String, dynamic>> writerDocRef =
+              feedData['writer'];
+          DocumentSnapshot<Map<String, dynamic>> writerSnapshot =
+              await writerDocRef.get();
+          // 피드를 작성한 유저의 정보를 UserModel
+          UserModel userModel = UserModel.fromMap(writerSnapshot.data()!);
+          feedData['writer'] = userModel;
+          // 1개의 피드를 반환
+          return FeedModel.fromMap(feedData);
+        }),
+      );
     } catch (_) {
       rethrow;
     }

@@ -11,18 +11,24 @@ import '/feed/state/feed_state.dart';
 class ImageSliderWidget extends StatefulWidget {
   // 이미지 리스트 경로
   final List<String> images;
+
   // 등록 모드인지 여부
   // Image.file() 사용, 오른쪽 상단에 삭제 기능
   final bool isNewScreen;
+
   // assets 모드인지 여부
   // Image.asset() 사용
   final bool isAsset;
+
+  // 프로필 화면에서 사용 여부 : 이미지 확대를 하는 기능을 제공
+  final bool isProfileScreen;
 
   const ImageSliderWidget({
     super.key,
     required this.images,
     this.isNewScreen = false,
     this.isAsset = false,
+    this.isProfileScreen = false,
   });
 
   @override
@@ -116,7 +122,12 @@ class _ImageSliderWidgetState extends State<ImageSliderWidget> {
               },
             ),
             itemBuilder: (context, index, _) {
-              return _imageZoomInOutWidget(widget.images[index]);
+              // return _imageZoomInOutWidget(widget.images[index]);
+              return widget.isProfileScreen
+                  // 프로필 화면에서 사용한다면 이미지 확대 기능이 없도록
+                  ? _imageWidget(widget.images[index])
+                  // 프로필 화면이 아니라면 이미지 확대기능 제공
+                  : _imageZoomInOutWidget(widget.images[index]);
             },
           ),
           // 2> 슬라이드 내 이미지 삭제 버튼 (등록 모드일 때)

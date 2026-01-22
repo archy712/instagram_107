@@ -8,10 +8,15 @@ import 'package:video_player/video_player.dart';
 class ChewieWidget extends StatefulWidget {
   // 동영상 URL
   final String videoUrl;
+
   // 등록 화면에서 사용 여부 (로컬 동영상)
   final bool isNewScreen;
+
   // 프로필 화면에서 사용 여부
   final bool isProfileScreen;
+
+  // 탭 이벤트 콜백 추가 (프로필 화면에서 사용)
+  final VoidCallback? onTap;
 
   // 생성자
   const ChewieWidget({
@@ -19,6 +24,7 @@ class ChewieWidget extends StatefulWidget {
     required this.videoUrl,
     this.isNewScreen = false,
     this.isProfileScreen = false,
+    this.onTap,
   });
 
   @override
@@ -169,7 +175,10 @@ class _ChewieWidgetState extends State<ChewieWidget> {
             // Chewie 위젯이 들어갈 공간을 동영상 원본 비율에 맞게 설정
             width: _chewieController!.videoPlayerController.value.size.width,
             height: _chewieController!.videoPlayerController.value.size.height,
-            child: Chewie(controller: _chewieController!),
+            // child: Chewie(controller: _chewieController!),
+            child: _chewieWidgetWithStack(
+              Chewie(controller: _chewieController!),
+            ),
           ),
         ),
       );
@@ -180,6 +189,29 @@ class _ChewieWidgetState extends State<ChewieWidget> {
         child: const Center(child: CircularProgressIndicator()),
       );
     }
+  }
+
+  // GestureDetector를 포함한 비디오 위젯을 반환하는 헬퍼 함수
+  // Chewie 위젯 위에 투명한 GestureDetector를 겹침
+  Widget _chewieWidgetWithStack(Widget chewieWidget) {
+    return Stack(
+      children: [
+        // 1. 실제 비디오 플레이어 (Chewie)
+        chewieWidget,
+        // 2. 비디오 위에 겹쳐질 투명한 GestureDetector
+        Positioned.fill(
+          child: GestureDetector(
+            onTap: () {
+              // Chewie의 컨트롤 영역이 아닌 비디오 영역을 탭했을 때
+              // 외부에서 전달받은 onTap 콜백을 실행
+              widget.onTap?.call();
+            },
+            // GestureDetector가 탭 이벤트를 감지할 수 있도록 투명한 컨테이너를 제공
+            child: Container(color: Colors.transparent),
+          ),
+        ),
+      ],
+    );
   }
 
   // 로딩 시 보여줄 위젯

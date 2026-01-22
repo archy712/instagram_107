@@ -70,5 +70,14 @@
   "feedFollowing": "팔로잉",
   "feedFollowFollowingError": "피드 팔로우/팔로잉 오류",
   "feedLikeError": "피드 좋아요 처리 오류",
-  "feedBookmarkError": "피드 북마크 처리 오류"
+  "feedBookmarkError": "피드 북마크 처리 오류",
+  "profileSummeryFeed": "내 피드",
+  "profileSummeryFollower": "팔로워",
+  "profileSummeryFollowing": "팔로잉",
+  "profileEditUserProfile": "프로필 수정",
+  "profileShareUserProfile": "프로필 공유",
+  "profileTabMyFeed": "내 피드",
+  "profileTabLike": "좋아요",
+  "profileTabBookmark": "북마크",
+  "profileStateError": "프로필 상태 조회 오류"
 }

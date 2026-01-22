@@ -683,6 +683,91 @@ class S {
       args: [],
     );
   }
+
+  /// `My Feed`
+  String get profileSummeryFeed {
+    return Intl.message(
+      'My Feed',
+      name: 'profileSummeryFeed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Follower`
+  String get profileSummeryFollower {
+    return Intl.message(
+      'Follower',
+      name: 'profileSummeryFollower',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Following`
+  String get profileSummeryFollowing {
+    return Intl.message(
+      'Following',
+      name: 'profileSummeryFollowing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profile Edit`
+  String get profileEditUserProfile {
+    return Intl.message(
+      'Profile Edit',
+      name: 'profileEditUserProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profile Share`
+  String get profileShareUserProfile {
+    return Intl.message(
+      'Profile Share',
+      name: 'profileShareUserProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `My Feed`
+  String get profileTabMyFeed {
+    return Intl.message(
+      'My Feed',
+      name: 'profileTabMyFeed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Like`
+  String get profileTabLike {
+    return Intl.message('Like', name: 'profileTabLike', desc: '', args: []);
+  }
+
+  /// `Bookmark`
+  String get profileTabBookmark {
+    return Intl.message(
+      'Bookmark',
+      name: 'profileTabBookmark',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profile status inquiry error`
+  String get profileStateError {
+    return Intl.message(
+      'Profile status inquiry error',
+      name: 'profileStateError',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

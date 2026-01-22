@@ -85,7 +85,7 @@ class _FeedScreenState extends State<FeedScreen>
 
     // 전체 피드 리스트 받아오기
     List<FeedModel> feedList = feedState.feedList;
-    logger.i(feedList);
+    // logger.i(feedList);
 
     // 피드를 가져오는 중이라면 로딩 표시
     if (feedState.feedStatusEnum == FeedStatusEnum.fetching) {

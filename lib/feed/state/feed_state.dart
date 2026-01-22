@@ -20,8 +20,10 @@ enum FeedStatusEnum {
 class FeedState extends Equatable {
   // 피드 진행상태
   final FeedStatusEnum feedStatusEnum;
+
   // 상단 Top Feed List
   final List<FeedModel> recentlyFeedList;
+
   // 피드 목록
   final List<FeedModel> feedList;
 

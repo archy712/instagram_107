@@ -70,5 +70,14 @@
   "feedFollowing": "unfollow",
   "feedFollowFollowingError": "Feed follow/following Error",
   "feedLikeError": "Feed like processing error",
-  "feedBookmarkError": "Feed bookmark processing error"
+  "feedBookmarkError": "Feed bookmark processing error",
+  "profileSummeryFeed": "My Feed",
+  "profileSummeryFollower": "Follower",
+  "profileSummeryFollowing": "Following",
+  "profileEditUserProfile": "Profile Edit",
+  "profileShareUserProfile": "Profile Share",
+  "profileTabMyFeed": "My Feed",
+  "profileTabLike": "Like",
+  "profileTabBookmark": "Bookmark",
+  "profileStateError": "Profile status inquiry error"
 }
